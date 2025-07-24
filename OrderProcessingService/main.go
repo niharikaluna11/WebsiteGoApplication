@@ -6,6 +6,7 @@ import (
 	"OrderProcessingService/middleware"
 	repository "OrderProcessingService/respository"
 	"OrderProcessingService/services"
+	"OrderProcessingService/subevents"
 	"context"
 	"fmt"
 	"log"
@@ -48,6 +49,10 @@ func main() {
 	app.Get("/", func(ctx iris.Context) {
 		ctx.WriteString("Welcome to the Order Processing Service!")
 	})
+
+	repo := &repository.OrderRepoImpl{DB: db}
+
+	go subevents.ListenForPayments(repo)
 
 	userAPI := app.Party("/users")
 	{
