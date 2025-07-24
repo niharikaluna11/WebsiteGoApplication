@@ -59,16 +59,28 @@ func (r *OrderRepoImpl) GetOrders() ([]models.Order, error) {
 }
 
 // UpdateOrderStatus updates the status of a specific order
-func (r *OrderRepoImpl) UpdateOrderStatus(id string, status string) (*models.Order, error) {
-	var order models.Order
-	err := r.DB.Model(&order).Where("order_id = ?", id).Update("status", status).Error
+func (r *OrderRepoImpl) UpdateOrderStatus(id string, status string, paymentStatus string) (*models.Order, error) {
+	order, err := r.GetOrderById(id)
+	if order == nil {
+		return nil, gorm.ErrRecordNotFound
+	}
+
+	if paymentStatus == "" {
+		paymentStatus = string(order.PaymentStatus)
+	}
+
+	err = r.DB.Model(order).Updates(map[string]interface{}{
+		"status":         status,
+		"payment_status": paymentStatus,
+	}).Error
+
 	if err != nil {
 		return nil, err
 	}
 
-	// Fetch updated order back
-	if err := r.DB.Where("order_id = ?", id).First(&order).Error; err != nil {
+	if err := r.DB.Where("order_id = ?", id).First(order).Error; err != nil {
 		return nil, err
 	}
-	return &order, nil
+
+	return order, nil
 }

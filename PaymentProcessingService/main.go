@@ -3,11 +3,12 @@ package main
 import (
 	"PaymentProcessingService/config"
 	handlers "PaymentProcessingService/handler"
-	pubsubevents "PaymentProcessingService/pubsub"
 	"PaymentProcessingService/repository"
 	"PaymentProcessingService/services"
+	"PaymentProcessingService/subevents"
 	"fmt"
 	"log"
+
 	"github.com/joho/godotenv"
 	"github.com/kataras/iris/v12"
 )
@@ -29,7 +30,7 @@ func main() {
 
 	repo := &repository.PaymentRepoImpl{DB: db}
 
-	go pubsubevents.SubscribeToOrderEvents(repo)
+	go subevents.SubscribeToOrderEvents(repo)
 
 	service := &services.PaymentService{Repo: repo}
 	paymentHandler := &handlers.PaymentHandler{Service: *service}

@@ -2,7 +2,9 @@ package repository
 
 import (
 	"PaymentProcessingService/models"
+	"PaymentProcessingService/pubevents"
 	"context"
+	"fmt"
 	"math/rand"
 	"time"
 
@@ -31,8 +33,10 @@ func randomID(length int) string {
 }
 
 func (p *PaymentRepoImpl) MakePayment(client *pubsub.Client, ctx context.Context, paymentDTO *models.PaymentCreate) error {
+
 	paymentID := randomID(10)
 	transactionId := "TRANS-" + uuid.New().String()
+
 	newPayment := models.Payment{
 		ID:            paymentID,
 		OrderID:       paymentDTO.OrderID,
@@ -42,16 +46,21 @@ func (p *PaymentRepoImpl) MakePayment(client *pubsub.Client, ctx context.Context
 		Amount:        paymentDTO.Amount,
 		PaidAt:        time.Now().Format("2006-01-02 15:04:05"),
 	}
+
 	if err := p.DB.Create(newPayment).Error; err != nil {
 		return err
 	}
 
-	// event := &models.PaymentEvent{
-	// 	OrderID: paymentDTO.OrderID,
-	// 	Status:  models.Processing,
-	// }
-	// fmt.Println("PublishOrderCreated")
-	// pubsubevents.PublishOrderCreated(ctx, client, *event)
+	event := &models.PaymentEvent{
+		OrderID:       paymentDTO.OrderID,
+		Status:        models.Processing,
+		PaymentStatus: models.PaymentSuccess,
+	}
+
+	fmt.Println("Payment is success...")
+	fmt.Println("Publishing 'payment-events' to PubSub...")
+
+	pubevents.PublishOrderCreated(ctx, client, *event)
 	return nil
 }
 

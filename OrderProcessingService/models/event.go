@@ -9,6 +9,7 @@ type OrderEvent struct {
 // models/payment_event.go
 
 type PaymentEvent struct {
-	OrderID string        `json:"orderId"`
-	Status  PaymentStatus `json:"status"`
+	OrderID       string        `json:"orderId"`
+	Status        OrderStatus   `json:"status"`
+	PaymentStatus PaymentStatus `json:"paymentStatus"`
 }

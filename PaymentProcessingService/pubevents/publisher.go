@@ -1,16 +1,16 @@
-package pubsubevents
+package pubevents
 
 import (
-	"OrderProcessingService/models"
+	"PaymentProcessingService/models"
 	"context"
 	"encoding/json"
 
 	"cloud.google.com/go/pubsub"
 )
 
-const OrderTopic = "order-updates"
+const OrderTopic = "payment-events"
 
-func PublishOrderCreated(ctx context.Context, client *pubsub.Client, order models.OrderEvent) error {
+func PublishOrderCreated(ctx context.Context, client *pubsub.Client, order models.PaymentEvent) error {
 
 	ctx = context.Background()
 	client, err := pubsub.NewClient(ctx, "niharikaprojects")
@@ -20,12 +20,13 @@ func PublishOrderCreated(ctx context.Context, client *pubsub.Client, order model
 
 	defer client.Close()
 
-	topic := client.Topic("order-updates")
+	topic := client.Topic(OrderTopic)
 	data, _ := json.Marshal(order)
 
 	result := topic.Publish(ctx, &pubsub.Message{Data: data})
 
-	print("Publishing order event to PubSub...\n")
+	print("Publishing 'payment-events' to PubSub...\n")
+	print("Payment is success...\n")
 
 	_, err = result.Get(ctx)
 	return err

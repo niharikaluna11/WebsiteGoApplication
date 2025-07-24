@@ -6,8 +6,9 @@ type OrderCreatedEvent struct {
 }
 
 type PaymentEvent struct {
-	OrderID string      `json:"orderId"`
-	Status  OrderStatus `json:"status"`
+	OrderID      string      `json:"orderId"`
+	Status       OrderStatus `json:"status"`
+	PaymentStatus PaymentStatus `json:"paymentStatus"`
 }
 
 type OrderStatus string

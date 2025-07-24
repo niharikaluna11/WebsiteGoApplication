@@ -9,7 +9,7 @@ type OrderServiceInterface interface {
 	GenerateOrder(*models.OrderCreateDTO) (*models.Order, error)
 	GetOrderById(string) (*models.Order, error)
 	GetOrders() ([]models.Order, error)
-	UpdateOrderStatus(string, string) (*models.Order, error)
+	UpdateOrderStatus(string, string, string) (*models.Order, error)
 }
 
 type OrderService struct {
@@ -28,6 +28,6 @@ func (s *OrderService) GetOrders() ([]models.Order, error) {
 	return s.Repo.GetOrders()
 }
 
-func (s *OrderService) UpdateOrderStatus(id, status string) (*models.Order, error) {
-	return s.Repo.UpdateOrderStatus(id, status)
+func (s *OrderService) UpdateOrderStatus(id, status string, paymentStatus string) (*models.Order, error) {
+	return s.Repo.UpdateOrderStatus(id, status, paymentStatus)
 }

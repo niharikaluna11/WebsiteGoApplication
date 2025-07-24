@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"OrderProcessingService/models"
-	pubsubevents "OrderProcessingService/pubsub"
+	"OrderProcessingService/pubevents"
 	"OrderProcessingService/services"
 	"context"
 
@@ -43,7 +43,7 @@ func (h *OrderHandler) CreateOrder(ctx iris.Context) {
 		TotalAmount: order.TotalAmount,
 	}
 
-	err = pubsubevents.PublishOrderCreated(h.Ctx, h.PubSubClient, *event)
+	err = pubevents.PublishOrderCreated(h.Ctx, h.PubSubClient, *event)
 	if err != nil {
 		ctx.StopWithStatus(iris.StatusInternalServerError)
 		ctx.JSON(iris.Map{"error": "Failed to publish order event", "details": err.Error()})
@@ -71,15 +71,18 @@ func (h *OrderHandler) GetOrderById(ctx iris.Context) {
 }
 
 func (h *OrderHandler) UpdateOrderStatus(ctx iris.Context) {
+
 	var dto models.OrderStatusUpdateDTO
 	if err := ctx.ReadJSON(&dto); err != nil {
 		ctx.StopWithStatus(iris.StatusBadRequest)
 		return
 	}
-	order, err := h.Service.UpdateOrderStatus(dto.OrderId, string(dto.Status))
+
+	order, err := h.Service.UpdateOrderStatus(dto.OrderId, string(dto.Status), "")
 	if err != nil {
 		ctx.StopWithStatus(iris.StatusInternalServerError)
 		return
 	}
+	
 	ctx.JSON(order)
 }

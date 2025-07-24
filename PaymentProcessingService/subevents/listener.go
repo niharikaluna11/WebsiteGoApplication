@@ -1,4 +1,4 @@
-package pubsubevents
+package subevents
 
 import (
 	"PaymentProcessingService/models"
@@ -11,8 +11,9 @@ import (
 	"cloud.google.com/go/pubsub"
 )
 
+const Subscriber = "payment-service-sub"
+
 func SubscribeToOrderEvents(repo *repository.PaymentRepoImpl) {
-	fmt.Println(" Subscribing to 'payment-service-sub' pubsub topic...")
 
 	ctx := context.Background()
 	client, err := pubsub.NewClient(ctx, "niharikaprojects")
@@ -20,9 +21,10 @@ func SubscribeToOrderEvents(repo *repository.PaymentRepoImpl) {
 		log.Fatalf("PubSub Client error: %v", err)
 	}
 
-	sub := client.Subscription("payment-service-sub")
+	sub := client.Subscription(Subscriber)
 
 	err = sub.Receive(ctx, func(ctx context.Context, msg *pubsub.Message) {
+		fmt.Println("✅ Received message from PubSub 'order-updates'...")
 		fmt.Printf("✅ Payment Service received: %s\n", string(msg.Data))
 
 		var event models.OrderCreatedEvent

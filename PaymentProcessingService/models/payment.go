@@ -35,8 +35,7 @@ type PaymentCreate struct {
 	Method  PaymentMethod `json:"method" validate:"required,oneof=CREDIT_CARD DEBIT_CARD PAYPAL UPI NET_BANKING"`
 }
 
-
 type PaymentStatusUpdateDTO struct {
-	OrderID string       `json:"orderId" validate:"required"`
+	OrderID string        `json:"orderId" validate:"required"`
 	Status  PaymentStatus `json:"status" validate:"required,oneof=PENDING PROCESSING SHIPPED DELIVERED CANCELED"`
 }
