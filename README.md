@@ -131,3 +131,9 @@ Listens to `payment-events` topic.
 * **ORM**: GORM
 
 ---
+
+## 🚀 Deployment
+
+* The microservices are deployed on Google Cloud Platform (GCP) using Cloud Run:
+    *	🔗 Order Service: https://order-microservice-747901258630.us-central1.run.app
+    *	🔗 Payment Service: https://payment-microservice-747901258630.us-central1.run.app
